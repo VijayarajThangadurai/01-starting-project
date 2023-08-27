@@ -8,7 +8,7 @@ function App() {
   return (
     <Layout>
       {isCartVisible && <Cart />}
-      <Products />
+      {isCartVisible && <Products />}
     </Layout>
   );
 }
