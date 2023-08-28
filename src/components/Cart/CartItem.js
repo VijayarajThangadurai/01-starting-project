@@ -16,7 +16,7 @@ const increaseHandler = (item)=>{
   return (
     <ul>
       {cartItems.map((i)=>(
-    <li className={classes.item}>
+    <li className={classes.item} key={i.id}>
       <header>
         <h3>{i.title}</h3>
         <div className={classes.price}>
@@ -29,8 +29,8 @@ const increaseHandler = (item)=>{
           x <span>{i.quantity}</span>
         </div>
         <div className={classes.actions}>
-          <button onClick={decreaseHandler(i)}>-</button>
-          <button onClick={increaseHandler(i)}>+</button>
+          <button onClick={()=>decreaseHandler(i)}>-</button>
+          <button onClick={()=>increaseHandler(i)}>+</button>
         </div>
       </div>
     </li>

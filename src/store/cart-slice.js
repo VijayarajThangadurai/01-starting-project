@@ -35,6 +35,9 @@ const cartSlice = createSlice({
                           }
           }
         },
+        onRefresh(state,action){
+          state.items = action.payload;
+        }
     }
 });
 

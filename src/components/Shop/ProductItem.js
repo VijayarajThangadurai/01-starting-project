@@ -12,7 +12,7 @@ const ProductItem = (props) => {
   return (
     <ul>
       {props.products.map((i)=>(
-    <li className={classes.item}>
+    <li className={classes.item} key={i.id}>
       <Card>
         <header>
           <h3>{i.title}</h3>
