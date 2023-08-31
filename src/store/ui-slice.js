@@ -20,6 +20,9 @@ const uiSlice = createSlice({
                 message:action.payload.message,
             };
         },
+            showNotificationNull(state){
+                state.notification = null;
+            }
     },
 });
 

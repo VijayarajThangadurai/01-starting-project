@@ -4,7 +4,7 @@ import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import Notification from './components/UI/Notification';
 import { Fragment, useEffect, useState } from 'react';
-import { cartActions } from './store/cart-slice';
+import { addCartToDb, cartActions } from './store/cart-slice';
 import { uiActions } from './store/ui-slice';
 
 let initialState = true;
@@ -14,56 +14,31 @@ function App() {
   const isCartVisible = useSelector((state)=>state.ui.isCartVisible);
   const cart = useSelector((state)=>state.cart.items);
   const notification = useSelector((state)=>state.ui.notification);
-  const [initialNotifiaction, setInitialNotification]=useState(false);
+  const initialNotifiaction =useSelector((state)=>
+   state.cart.initialNotifiaction);
+   console.log(notification);
 
   useEffect(()=>{
-    const addToDb = async ()=>{
       if(initialState){
         initialState = false;
+        const restoreCart = async()=>{
         const cartRes = await fetch("https://shopping-app-724cb-default-rtdb.firebaseio.com/cart.json")
-        if(cartRes.ok){
           const data = await cartRes.json();
-          dispatch(cartActions.onRefresh(data));
+          if(cartRes.ok && data !== null){
+            dispatch(cartActions.onRefresh(data));
+          }
+          else if (!cart.ok){
+            throw new Error('Unable to load cart')
+          }
+        }
+        try{
+          restoreCart();
+        }catch(error){
+          alert(error);
         }
         return;
       }
-      if(!initialNotifiaction){
-        setInitialNotification(true);
-      }
-      try{
-        dispatch(
-          uiActions.showNotification({
-            status:"pending",
-            title:"Sending",
-            message:"Sending to cart",
-          })
-        );
-        const res = await fetch("https://shopping-app-724cb-default-rtdb.firebaseio.com/cart.json",{
-          method:"PUT",
-          body:JSON.stringify(cart),
-        }
-        );
-        if (!res.ok){
-          throw new Error("Unable to add");
-        }
-        dispatch(
-          uiActions.showNotification({
-            status:"success",
-            title: "Success!",
-            message: "Successfully send to cart",
-          })
-        );
-      }catch(error){
-        dispatch(
-          uiActions.showNotification({
-            status:"error",
-            title:"Error!",
-            message:"Sending to cart failed",
-          })
-        );
-      }
-    };
-    addToDb();
+      dispatch(addCartToDb(cart));
   },[cart,dispatch]);
   return (
     <Fragment>
